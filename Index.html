@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: 'unsafe-inline'; img-src 'self' https: data:; style-src 'self' https: 'unsafe-inline'; script-src 'self' 'unsafe-inline';">
+  <title>Aether Search | Smooth & Secure</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(circle at 50% -20%, #1e1e38 0%, #0d0e15 60%, #08080c 100%);
+      --surface-glass: rgba(255, 255, 255, 0.04);
+      --surface-border: rgba(255, 255, 255, 0.08);
+      --surface-hover: rgba(255, 255, 255, 0.07);
+      --accent: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.25);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --bezier-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1.5rem;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    .glow-bg {
+      position: absolute;
+      top: 15%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 550px;
+      height: 320px;
+      background: radial-gradient(ellipse, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+      filter: blur(80px);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 760px;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.6s var(--bezier-smooth);
+    }
+
+    .brand {
+      margin-top: 6vh;
+      margin-bottom: 2.2rem;
+      text-align: center;
+      transition: all 0.5s var(--bezier-smooth);
+    }
+
+    .brand h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      background: linear-gradient(135deg, #ffffff 40%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-top: 0.4rem;
+      letter-spacing: -0.01em;
+    }
+
+    .shield-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-top: 0.65rem;
+      padding: 0.25rem 0.7rem;
+      font-size: 0.75rem;
+      color: #a5b4fc;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.28);
+      border-radius: 999px;
+    }
+
+    .search-wrapper {
+      width: 100%;
+      position: relative;
+    }
+
+    .search-bar {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: var(--surface-glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--surface-border);
+      border-radius: 20px;
+      padding: 0.85rem 1.25rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      transition: all 0.35s var(--bezier-smooth);
+    }
+
+    .search-bar:focus-within {
+      border-color: rgba(99, 102, 241, 0.5);
+      box-shadow: 0 0 0 4px var(--accent-glow), 0 20px 40px rgba(0, 0, 0, 0.4);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .search-icon {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: var(--text-muted);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      margin-right: 0.85rem;
+      flex-shrink: 0;
+      transition: stroke 0.3s ease;
+    }
+
+    .search-bar:focus-within .search-icon {
+      stroke: var(--accent);
+    }
+
+    input[type="text"] {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-main);
+      font-size: 1.05rem;
+      font-weight: 400;
+    }
+
+    input[type="text"]::placeholder {
+      color: rgba(156, 163, 175, 0.6);
+    }
+
+    .action-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .action-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .suggestions {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      right: 0;
+      background: rgba(18, 19, 28, 0.96);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid var(--surface-border);
+      border-radius: 16px;
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-8px);
+      transition: all 0.25s var(--bezier-smooth);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      z-index: 10;
+    }
+
+    .suggestions.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .suggestion-item {
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.95rem;
+      color: #d1d5db;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .suggestion-item:hover, .suggestion-item.selected {
+      background: var(--surface-hover);
+      color: #ffffff;
+    }
+
+    .suggestion-item svg {
+      width: 15px;
+      height: 15px;
+      stroke: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 0.6rem;
+      margin-top: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 0.45rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .tab:hover {
+      color: var(--text-main);
+      background: var(--surface-glass);
+    }
+
+    .tab.active {
+      color: #fff;
+      background: rgba(99, 102, 241, 0.15);
+      border-color: rgba(99, 102, 241, 0.3);
+    }
+
+    .status-note {
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      color: #fbbf24;
+      min-height: 1.1rem;
+      text-align: center;
+    }
+
+    .results-container {
+      width: 100%;
+      margin-top: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: all 0.4s var(--bezier-smooth);
+    }
+
+    .results-container.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .result-card {
+      background: var(--surface-glass);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--surface-border);
+      padding: 1.25rem;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: transform 0.2s var(--bezier-smooth), border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .result-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.16);
+      background: var(--surface-hover);
+    }
+
+    .result-url {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+      word-break: break-all;
+    }
+
+    .result-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #818cf8;
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 0.45rem;
+    }
+
+    .result-desc {
+      font-size: 0.9rem;
+      color: #9ca3af;
+      line-height: 1.5;
+    }
+
+    .searched .brand {
+      margin-top: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .searched .brand h1 {
+      font-size: 1.8rem;
+    }
+
+    .searched .brand p {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-bg"></div>
+
+  <div class="container" id="mainContainer">
+    <header class="brand">
+      <h1>Aether</h1>
+      <p>Clean, frictionless and instant exploration</p>
+      <div class="shield-badge">XSS &amp; Link Protected</div>
+    </header>
+
+    <div class="search-wrapper">
+      <div class="search-bar">
+        <svg class="search-icon" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+
+        <input
+          type="text"
+          id="searchInput"
+          maxlength="140"
+          placeholder="Kuch bhi search karein ya type karein..."
+          autocomplete="off"
+          spellcheck="false"
+        >
+
+        <button class="action-btn" id="voiceBtn" type="button" title="Voice Search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+            <line x1="12" y1="19" x2="12" y2="23"></line>
+            <line x1="8" y1="23" x2="16" y2="23"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="suggestions" id="suggestionsBox"></div>
+    </div>
+
+    <div class="filter-tabs">
+      <button class="tab active" type="button" data-filter="all">All</button>
+      <button class="tab" type="button" data-filter="web">Web</button>
+      <button class="tab" type="button" data-filter="news">News</button>
+      <button class="tab" type="button" data-filter="tech">Tech</button>
+    </div>
+
+    <div class="status-note" id="statusNote"></div>
+    <div class="results-container" id="resultsBox"></div>
+  </div>
+
+  <script>
+    const sampleDatabase = [
+      {
+        title: "Modern Web Architecture & Low Latency Design",
+        url: "https://arch.io/systems/speed",
+        desc: "High-performance systems ko build karne ke architectural patterns, caching strategies aur edge deployment principles.",
+        tags: ["tech", "all"]
+      },
+      {
+        title: "Global Tech Trends & Emerging Breakthroughs",
+        url: "https://technews.today/trends",
+        desc: "Artificial Intelligence, Quantum Computing aur Cloud Computing ke latest developments par detailed case studies.",
+        tags: ["news", "tech", "all"]
+      },
+      {
+        title: "Building Intuitive User Experiences (UI/UX)",
+        url: "https://designfluid.co/principles",
+        desc: "Smooth animations, accessibility, micro-interactions aur keyboard shortcuts optimize karne ke rules.",
+        tags: ["web", "all"]
+      },
+      {
+        title: "Optimized Algorithms & Data Structures",
+        url: "https://csbasics.dev/dsa-optimized",
+        desc: "Search trees, hashing, dynamic programming aur memory footprint ko minimum rakhne ki techniques.",
+        tags: ["tech", "all"]
+      }
+    ];
+
+    const searchInput = document.getElementById('searchInput');
+    const suggestionsBox = document.getElementById('suggestionsBox');
+    const resultsBox = document.getElementById('resultsBox');
+    const mainContainer = document.getElementById('mainContainer');
+    const statusNote = document.getElementById('statusNote');
+    const tabs = document.querySelectorAll('.tab');
+
+    let currentFocus = -1;
+    let activeFilter = "all";
+    let lastSearchTime = 0;
+
+    function escapeHTML(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function sanitizeUrl(url) {
+      try {
+        const parsed = new URL(url, window.location.origin);
+        if (parsed.protocol === "https:" || parsed.protocol === "http:") {
+          return parsed.href;
+        }
+      } catch (e) {
+        return "#";
+      }
+      return "#";
+    }
+
+    function cleanQuery(raw) {
+      return raw.replace(/\s+/g, " ").trim().slice(0, 140);
+    }
+
+    searchInput.addEventListener('input', (e) => {
+      const query = cleanQuery(e.target.value).toLowerCase();
+      currentFocus = -1;
+      statusNote.textContent = "";
+
+      if (!query) {
+        suggestionsBox.classList.remove('active');
+        return;
+      }
+
+      const matches = sampleDatabase
+        .filter(item => item.title.toLowerCase().includes(query) || item.desc.toLowerCase().includes(query))
+        .map(item => item.title);
+
+      if (matches.length > 0) {
+        renderSuggestions(matches);
+      } else {
+        renderSuggestions([query + " - Direct Search"]);
+      }
+    });
+
+    function renderSuggestions(list) {
+      suggestionsBox.innerHTML = "";
+      list.slice(0, 5).forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'suggestion-item';
+
+        const svgNS = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(svgNS, "svg");
+        svg.setAttribute("viewBox", "0 0 24 24");
+        svg.setAttribute("fill", "none");
+        svg.setAttribute("stroke-width", "2");
+        svg.setAttribute("stroke-linecap", "round");
+        svg.setAttribute("stroke-linejoin", "round");
+
+        const poly = document.createElementNS(svgNS, "polyline");
+        poly.setAttribute("points", "9 18 15 12 9 6");
+        svg.appendChild(poly);
+
+        const span = document.createElement('span');
+        span.textContent = item;
+
+        div.appendChild(svg);
+        div.appendChild(span);
+
+        div.addEventListener('click', () => {
+          searchInput.value = item;
+          executeSearch();
+        });
+
+        suggestionsBox.appendChild(div);
+      });
+
+      suggestionsBox.classList.add('active');
+    }
+
+    searchInput.addEventListener('keydown', (e) => {
+      const items = suggestionsBox.querySelectorAll('.suggestion-item');
+      if (!items.length || !suggestionsBox.classList.contains('active')) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          executeSearch();
+        }
+        return;
+      }
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        currentFocus = (currentFocus + 1) % items.length;
+        setActive(items);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        currentFocus = (currentFocus - 1 + items.length) % items.length;
+        setActive(items);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (currentFocus > -1 && items[currentFocus]) {
+          searchInput.value = items[currentFocus].innerText.trim();
+        }
+        executeSearch();
+      }
+    });
+
+    function setActive(items) {
+      items.forEach(el => el.classList.remove('selected'));
+      if (currentFocus >= 0 && items[currentFocus]) {
+        items[currentFocus].classList.add('selected');
+        searchInput.value = items[currentFocus].innerText.trim();
+      }
+    }
+
+    function executeSearch() {
+      const now = Date.now();
+      if (now - lastSearchTime < 350) {
+        statusNote.textContent = "Thoda ruk kar search karein...";
+        return;
+      }
+      lastSearchTime = now;
+
+      const rawQuery = cleanQuery(searchInput.value);
+      suggestionsBox.classList.remove('active');
+
+      if (!rawQuery) return;
+
+      const lowerQuery = rawQuery.toLowerCase();
+      const safeQueryText = escapeHTML(rawQuery);
+      const googleSafeUrl = sanitizeUrl("https://www.google.com/search?q=" + encodeURIComponent(rawQuery));
+
+      mainContainer.classList.add('searched');
+      resultsBox.classList.remove('visible');
+      statusNote.textContent = "";
+
+      setTimeout(() => {
+        const filtered = sampleDatabase.filter(item => {
+          const matchText = item.title.toLowerCase().includes(lowerQuery) || item.desc.toLowerCase().includes(lowerQuery);
+          const matchTab = activeFilter === 'all' || item.tags.includes(activeFilter);
+          return matchText && matchTab;
+        });
+
+        resultsBox.innerHTML = "";
+
+        if (filtered.length > 0) {
+          filtered.forEach(res => {
+            const safeHref = sanitizeUrl(res.url);
+            const card = document.createElement('div');
+            card.className = 'result-card';
+            card.addEventListener('click', () => {
+              window.open(safeHref, '_blank', 'noopener,noreferrer');
+            });
+
+            card.innerHTML = `
+              <div class="result-url">${escapeHTML(safeHref)}</div>
+              <a href="${escapeHTML(safeHref)}" class="result-title" target="_blank" rel="noopener noreferrer">${escapeHTML(res.title)}</a>
+              <div class="result-desc">${escapeHTML(res.desc)}</div>
+            `;
+            resultsBox.appendChild(card);
+          });
+        } else {
+          const card = document.createElement('div');
+          card.className = 'result-card';
+          card.innerHTML = `
+            <div class="result-title" style="color: #f87171;">"${safeQueryText}" ke liye direct results nahi mile</div>
+            <div class="result-desc">Aap chahein toh internet par khoj sakte hain: <a href="${escapeHTML(googleSafeUrl)}" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline;">Google par search karein</a></div>
+          `;
+          resultsBox.appendChild(card);
+        }
+
+        resultsBox.classList.add('visible');
+      }, 200);
+    }
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        activeFilter = tab.dataset.filter;
+        if (cleanQuery(searchInput.value)) {
+          executeSearch();
+        }
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+        suggestionsBox.classList.remove('active');
+      }
+    });
+
+    const voiceBtn = document.getElementById('voiceBtn');
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.lang = 'hi-IN';
+
+      voiceBtn.addEventListener('click', () => {
+        voiceBtn.style.color = '#ef4444';
+        recognition.start();
+      });
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        searchInput.value = cleanQuery(transcript);
+        voiceBtn.style.color = '';
+        executeSearch();
+      };
+
+      recognition.onerror = () => {
+        voiceBtn.style.color = '';
+      };
+
+      recognition.onend = () => {
+        voiceBtn.style.color = '';
+      };
+    } else {
+      voiceBtn.style.display = 'none';
+    }
+  </script>
+</body>
+</html>
